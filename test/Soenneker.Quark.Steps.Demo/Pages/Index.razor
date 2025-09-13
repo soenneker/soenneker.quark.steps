@@ -1,18 +1,205 @@
 ﻿@page "/"
-@using Microsoft.Extensions.Logging
+@using Soenneker.Quark.Steps
+@using Soenneker.Quark.Steps.Enums
+@using Soenneker.Quark.Enums.Colors
 
-@inject ILogger<Index> Logger
+<div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+    <div style="text-align: center; margin-bottom: 3rem;">
+        <h1 style="font-size: 2.5rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem;">Quark Steps</h1>
+        <p style="font-size: 1.125rem; color: #64748b; max-width: 600px; margin: 0 auto;">Experience the next generation of step navigation with our ultra-modern, minimalistic design that's both beautiful and functional.</p>
+    </div>
 
-<img src="https://user-images.githubusercontent.com/4441470/224455560-91ed3ee7-f510-4041-a8d2-3fc093025112.png" />
-<h1>Soenneker.Quark.Steps demo</h1>
-<p>This page demonstrates some of the common usages for the interop library.</p>
-<br />
+    <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 3rem; border-radius: 24px; margin-bottom: 4rem;">
+        <h2 style="font-size: 1.875rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; text-align: center;">✨ Modern Step Navigation</h2>
+        <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Click on any step to navigate directly, or use the navigation buttons below.</p>
 
-<hr />
+        <Steps @bind-SelectedStep="_currentStep">
+            <Step Name="step1">
+                <Caption>Personal Information</Caption>
+            </Step>
+            <Step Name="step2">
+                <Caption>Contact Details</Caption>
+            </Step>
+            <Step Name="step3">
+                <Caption>Review & Confirm</Caption>
+            </Step>
+            <Step Name="step4">
+                <Caption>Complete</Caption>
+            </Step>
+        </Steps>
 
-@code{
+        <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+            <button @onclick="GoToPrevious" disabled="@(_currentStep == "step1")" 
+                    style="padding: 0.75rem 1.5rem; border: 1px solid #e2e8f0; background: white; border-radius: 12px; font-weight: 500; transition: all 0.2s; cursor: pointer;"
+                    onmouseover="this.style.borderColor='#3b82f6'; this.style.color='#3b82f6';"
+                    onmouseout="this.style.borderColor='#e2e8f0'; this.style.color='inherit';">
+                ← Previous
+            </button>
+            <button @onclick="GoToNext" disabled="@(_currentStep == "step4")" 
+                    style="padding: 0.75rem 1.5rem; background: #3b82f6; color: white; border: none; border-radius: 12px; font-weight: 500; transition: all 0.2s; cursor: pointer;"
+                    onmouseover="this.style.background='#1e40af';"
+                    onmouseout="this.style.background='#3b82f6';">
+                Next →
+            </button>
+        </div>
+        
+        <div style="text-align: center; margin-top: 1.5rem;">
+            <span style="background: #f1f5f9; padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.875rem; color: #64748b;">
+                Current Step: <strong>@_currentStep</strong>
+            </span>
+        </div>
+    </div>
 
-    protected override void OnInitialized()
-    {
-    }
+    <div style="background: white; padding: 3rem; border-radius: 24px; border: 1px solid #f1f5f9; margin-bottom: 4rem;">
+        <h2 style="font-size: 1.875rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; text-align: center;">🎨 Custom Markers & Colors</h2>
+        <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Showcase your brand with custom icons and color schemes.</p>
+        
+        <Steps SelectedStep="_customStep">
+            <Step Name="step1" Color="Color.Success">
+                <Marker>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor" />
+                    </svg>
+                </Marker>
+                <Caption>Launch</Caption>
+            </Step>
+            <Step Name="step2" Color="Color.Warning">
+                <Marker>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L2 7L12 12L22 7L12 2Z" fill="currentColor" />
+                    </svg>
+                </Marker>
+                <Caption>Process</Caption>
+            </Step>
+            <Step Name="step3" Color="Color.Danger">
+                <Marker>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2L13.09 8.26L20 9L13.09 9.74L12 16L10.91 9.74L4 9L10.91 8.26L12 2Z" fill="currentColor" />
+                    </svg>
+                </Marker>
+                <Caption>Complete</Caption>
+            </Step>
+        </Steps>
+    </div>
+
+    <div style="background: white; padding: 3rem; border-radius: 24px; border: 1px solid #f1f5f9; margin-bottom: 4rem;">
+        <h2 style="font-size: 1.875rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; text-align: center;">📋 Interactive Content Panels</h2>
+        <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Experience dynamic content switching with smooth transitions.</p>
+        
+        <Steps SelectedStep="_contentStep" RenderMode="StepRenderMode.Default">
+            <Items>
+                <Step Name="info">
+                    <Caption>Information</Caption>
+                </Step>
+                <Step Name="settings">
+                    <Caption>Settings</Caption>
+                </Step>
+                <Step Name="preview">
+                    <Caption>Preview</Caption>
+                </Step>
+            </Items>
+            <Content>
+                <StepPanel Name="info">
+                    <div style="text-align: center;">
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem;">📊 Information Panel</h3>
+                        <p style="color: #64748b; line-height: 1.6;">This is where you can display detailed information about the current step. The content area provides a clean, focused space for your users to read and understand what they need to do.</p>
+                        <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+                            <p style="margin: 0; font-weight: 500; color: #475569;">💡 Tip: Use this space to provide helpful context and guidance.</p>
+                        </div>
+                    </div>
+                </StepPanel>
+                <StepPanel Name="settings">
+                    <div style="text-align: center;">
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem;">⚙️ Settings Panel</h3>
+                        <p style="color: #64748b; line-height: 1.6;">Configure your preferences and customize your experience. This panel demonstrates how you can create interactive forms and settings within your step flow.</p>
+                        <div style="background: #fef3c7; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+                            <p style="margin: 0; font-weight: 500; color: #92400e;">🔧 Settings and configuration options go here.</p>
+                        </div>
+                    </div>
+                </StepPanel>
+                <StepPanel Name="preview">
+                    <div style="text-align: center;">
+                        <h3 style="font-size: 1.5rem; font-weight: 600; color: #1e293b; margin-bottom: 1rem;">👀 Preview Panel</h3>
+                        <p style="color: #64748b; line-height: 1.6;">Review your selections and see a preview of what you've configured. This final step helps users confirm their choices before proceeding.</p>
+                        <div style="background: #dbeafe; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem;">
+                            <p style="margin: 0; font-weight: 500; color: #1e40af;">✨ Preview and confirmation content goes here.</p>
+                        </div>
+                    </div>
+                </StepPanel>
+            </Content>
+        </Steps>
+
+        <div style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap;">
+            <button @onclick="SetInfoStep" 
+                    style="padding: 0.5rem 1rem; border: 1px solid #e2e8f0; background: white; border-radius: 8px; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer;"
+                    onmouseover="this.style.borderColor='#3b82f6'; this.style.color='#3b82f6';"
+                    onmouseout="this.style.borderColor='#e2e8f0'; this.style.color='inherit';">
+                Information
+            </button>
+            <button @onclick="SetSettingsStep" 
+                    style="padding: 0.5rem 1rem; border: 1px solid #e2e8f0; background: white; border-radius: 8px; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer;"
+                    onmouseover="this.style.borderColor='#3b82f6'; this.style.color='#3b82f6';"
+                    onmouseout="this.style.borderColor='#e2e8f0'; this.style.color='inherit';">
+                Settings
+            </button>
+            <button @onclick="SetPreviewStep" 
+                    style="padding: 0.5rem 1rem; border: 1px solid #e2e8f0; background: white; border-radius: 8px; font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer;"
+                    onmouseover="this.style.borderColor='#3b82f6'; this.style.color='#3b82f6';"
+                    onmouseout="this.style.borderColor='#e2e8f0'; this.style.color='inherit';">
+                Preview
+            </button>
+        </div>
+    </div>
+
+    <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); padding: 3rem; border-radius: 24px; border: 1px solid #bbf7d0;">
+        <h2 style="font-size: 1.875rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; text-align: center;">✅ Progress Tracking</h2>
+        <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Visual progress indicators help users understand their journey and completed tasks.</p>
+        
+        <Steps SelectedStep="_completedStep">
+            <Step Name="step1" Completed="true">
+                <Caption>Account Setup</Caption>
+            </Step>
+            <Step Name="step2" Completed="true">
+                <Caption>Profile Configuration</Caption>
+            </Step>
+            <Step Name="step3">
+                <Caption>Verification</Caption>
+            </Step>
+            <Step Name="step4">
+                <Caption>Final Review</Caption>
+            </Step>
+        </Steps>
+        
+        <div style="text-align: center; margin-top: 2rem;">
+            <div style="background: white; padding: 1.5rem; border-radius: 12px; display: inline-block; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+                <p style="margin: 0; font-weight: 600; color: #059669;">🎉 Great progress! You're 50% complete.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+	private string _currentStep = "step1";
+	private string _customStep = "step1";
+	private string _contentStep = "info";
+	private string _completedStep = "step3";
+
+	private void GoToNext()
+	{
+		if (_currentStep == "step1") _currentStep = "step2";
+		else if (_currentStep == "step2") _currentStep = "step3";
+		else if (_currentStep == "step3") _currentStep = "step4";
+	}
+
+	private void GoToPrevious()
+	{
+		if (_currentStep == "step2") _currentStep = "step1";
+		else if (_currentStep == "step3") _currentStep = "step2";
+		else if (_currentStep == "step4") _currentStep = "step3";
+	}
+
+
+	private void SetInfoStep() => _contentStep = "info";
+	private void SetSettingsStep() => _contentStep = "settings";
+	private void SetPreviewStep() => _contentStep = "preview";
 }

@@ -1,37 +1,71 @@
-@using Soenneker.Quark.Enums.Colors
+@using Microsoft.AspNetCore.Components.Web
 @using Soenneker.Quark.Divs
-@inherits Soenneker.Quark.Components.Element
+@using Soenneker.Quark.Enums.Colors
+@using Soenneker.Quark.Steps.Dtos
+@using Soenneker.Quark.Steps.Enums
+@using Soenneker.Quark.Spans
+@using Soenneker.Quark.ListItems
+@using Soenneker.Quark.Anchors
 
-<Div Class="step" @attributes="BuildAttributes()">
-    @if (Numbered)
-    {
-        <Div Class="step-number">@StepNumber</Div>
-    }
-    <Div Class="step-content">
-        @if (!string.IsNullOrEmpty(Title))
+@inherits Soenneker.Quark.Components.Element
+@implements IDisposable
+
+<ListItem Class="@GetStepClasses()">
+    <Anchor Class="@GetStepLinkClasses()" OnClick="@HandleStepClick" role="tab" aria-selected="@(Active ? "true" : "false")" aria-current="@(Active ? "step" : null)" @attributes="BuildAttributes()">
+        <Div Class="@GetMarkerClasses()">
+            @if (Marker != null)
+            {
+                @Marker
+            }
+            else
+            {
+                @if (Completed)
+                {
+                    <Span>✓</Span>
+                }
+                else if (Index.HasValue)
+                {
+                    <Span>@Index.Value</Span>
+                }
+                else
+                {
+                    <Span>@CalculatedIndex</Span>
+                }
+            }
+        </Div>
+        
+        @if (Caption != null || !string.IsNullOrEmpty(Title))
         {
-            <Div Class="step-title">@Title</Div>
+            <Div Class="@GetDescriptionClasses()">
+                @if (Caption != null)
+                {
+                    @Caption
+                }
+                else
+                {
+                    @if (!string.IsNullOrEmpty(Title))
+                    {
+                        <Div Class="step-title">@Title</Div>
+                    }
+                    @ChildContent
+                }
+            </Div>
         }
-        @if (!string.IsNullOrEmpty(Description))
+        else
         {
-            <Div Class="step-description">@Description</Div>
+            @ChildContent
         }
-        @ChildContent
-    </Div>
-</Div>
+    </Anchor>
+</ListItem>
 
 @code {
-    [Parameter]
-    public int StepNumber { get; set; }
+    private StepState? _parentStepsState;
 
     [Parameter]
-    public new string? Title { get; set; }
+    public string? Name { get; set; }
 
     [Parameter]
-    public string? Description { get; set; }
-
-    [Parameter]
-    public bool Active { get; set; }
+    public int? Index { get; set; }
 
     [Parameter]
     public bool Completed { get; set; }
@@ -43,23 +77,116 @@
     public Color Color { get; set; } = Color.Primary;
 
     [Parameter]
-    public bool Numbered { get; set; } = true;
+    public StepStatus Status { get; set; } = StepStatus.Pending;
 
-    protected override Dictionary<string, object> BuildAttributes()
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnStepClick { get; set; }
+
+    [Parameter]
+    public RenderFragment? Marker { get; set; }
+
+    [Parameter]
+    public RenderFragment? Caption { get; set; }
+
+    [CascadingParameter]
+    public StepState? ParentStepsState
     {
-        Dictionary<string, object> attributes = base.BuildAttributes();
+        get => _parentStepsState;
+        set
+        {
+            if (_parentStepsState == value)
+                return;
 
-        var baseClasses = "step";
+            _parentStepsState = value;
+            StateHasChanged();
+        }
+    }
+
+    [CascadingParameter]
+    public Steps? ParentSteps { get; set; }
+
+    private bool Active => _parentStepsState?.SelectedStep == Name;
+
+    private int CalculatedIndex => Index ?? ParentSteps?.IndexOfStep(Name ?? string.Empty) ?? 1;
+
+    private string GetStepClasses()
+    {
+        var classes = new List<string> { "nav-item" };
+        return string.Join(" ", classes);
+    }
+
+    private string GetStepLinkClasses()
+    {
+        var classes = new List<string>
+        {
+            "nav-link",
+            "rounded-pill",
+            "px-3",
+            "py-2",
+            "d-flex",
+            "align-items-center",
+            "gap-2",
+            "text-body-secondary"
+        };
+
         if (Active)
-            baseClasses = $"{baseClasses} step-active";
+        {
+            classes.Add("active");
+            classes.Add("fw-semibold");
+        }
+        else
+        {
+            classes.Add("opacity-75");
+        }
+
         if (Completed)
-            baseClasses = $"{baseClasses} step-completed";
+            classes.Add("text-success");
+
         if (Disabled)
-            baseClasses = $"{baseClasses} step-disabled";
+            classes.Add("disabled");
 
-        attributes["class"] = AppendToClass(attributes.GetValueOrDefault("class")
-            ?.ToString(), baseClasses);
+        if (Status != StepStatus.Pending)
+            classes.Add($"step-{Status.Value}");
 
-        return attributes;
+        return string.Join(" ", classes);
+    }
+
+    private string GetMarkerClasses()
+    {
+        var classes = new List<string> { "step-marker" };
+
+        if (!string.IsNullOrEmpty(Color?.ToString()))
+            classes.Add($"step-marker-{Color.ToString()?.ToLower()}");
+
+        if (Active)
+            classes.Add("step-marker-active");
+
+        return string.Join(" ", classes);
+    }
+
+    private string GetDescriptionClasses()
+    {
+        return "step-description";
+    }
+
+    private async Task HandleStepClick(MouseEventArgs args)
+    {
+        await OnStepClick.InvokeAsync(args);
+
+        if (ParentSteps != null && !string.IsNullOrEmpty(Name))
+        {
+            await ParentSteps.SelectStep(Name);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        ParentSteps?.NotifyStepInitialized(Name ?? string.Empty);
+        base.OnInitialized();
+    }
+
+    public new void Dispose()
+    {
+        ParentSteps?.NotifyStepRemoved(Name ?? string.Empty);
     }
 }

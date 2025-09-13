@@ -1,34 +1,158 @@
-@using Soenneker.Quark.Enums.Colors
 @using Soenneker.Quark.Divs
-@inherits Soenneker.Quark.Components.Element
+@using Soenneker.Quark.Steps.Dtos
+@using Soenneker.Quark.Steps.Enums
+@using Soenneker.Quark.Steps.Abstract
+@using Soenneker.Quark.UnorderedLists
 
-<Div Class="steps" @attributes="BuildAttributes()">
-    @ChildContent
-</Div>
+@inherits Soenneker.Quark.Components.Element
+@inject IStepsInterop StepsInterop
+
+<CascadingValue Value="_state">
+    <CascadingValue Value="this">
+    <UnorderedList Class="@GetStepsClasses()" @attributes="BuildAttributes()">
+        @if (Items != null)
+        {
+            @Items
+        }
+        else
+        {
+            @ChildContent
+        }
+    </UnorderedList>
+
+        @if (Content != null)
+        {
+            <Div Class="@GetContentClasses()">
+                @Content
+            </Div>
+        }
+    </CascadingValue>
+</CascadingValue>
 
 @code {
-    [Parameter]
-    public Color Color { get; set; } = Color.Primary;
+    private StepState _state = new();
+    private readonly List<string> _stepItems = new();
 
-    [Parameter]
-    public bool Vertical { get; set; }
-
-    [Parameter]
-    public bool Numbered { get; set; }
-
-    protected override Dictionary<string, object> BuildAttributes()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        Dictionary<string, object> attributes = base.BuildAttributes();
+	    if (firstRender)
+	    {
+		    await StepsInterop.Initialize();
+	    }
+        
+	    await base.OnAfterRenderAsync(firstRender);
+    }
 
-        var baseClasses = "steps";
-        if (Vertical)
-            baseClasses = $"{baseClasses} steps-vertical";
-        if (Numbered)
-            baseClasses = $"{baseClasses} steps-numbered";
+    [Parameter]
+    public string SelectedStep
+    {
+        get => _state.SelectedStep;
+        set
+        {
+            if (value == _state.SelectedStep)
+                return;
 
-        attributes["class"] = AppendToClass(attributes.GetValueOrDefault("class")
-            ?.ToString(), baseClasses);
+            var allowNavigation = NavigationAllowed?.Invoke(new StepNavigationContext
+            {
+                CurrentStepName = _state.SelectedStep,
+                CurrentStepIndex = IndexOfStep(_state.SelectedStep),
+                NextStepName = value,
+                NextStepIndex = IndexOfStep(value),
+            }) ?? true;
 
-        return attributes;
+            if (allowNavigation == false)
+                return;
+
+            _state = _state with { SelectedStep = value };
+            SelectedStepChanged.InvokeAsync(_state.SelectedStep);
+            StateHasChanged();
+        }
+    }
+
+    [Parameter]
+    public StepRenderMode RenderMode
+    {
+        get => _state.RenderMode;
+        set
+        {
+            _state = _state with { RenderMode = value };
+            StateHasChanged();
+        }
+    }
+
+    [Parameter]
+    public EventCallback<string> SelectedStepChanged { get; set; }
+
+    [Parameter]
+    public Func<StepNavigationContext, bool>? NavigationAllowed { get; set; }
+
+    [Parameter]
+    public RenderFragment? Items { get; set; }
+
+    [Parameter]
+    public RenderFragment? Content { get; set; }
+
+    internal void NotifyStepInitialized(string name)
+    {
+        if (!_stepItems.Contains(name))
+            _stepItems.Add(name);
+    }
+
+    internal void NotifyStepRemoved(string name)
+    {
+        if (_stepItems.Contains(name))
+            _stepItems.Remove(name);
+    }
+
+    public Task SelectStep(string stepName)
+    {
+        SelectedStep = stepName;
+        return InvokeAsync(StateHasChanged);
+    }
+
+    public Task NextStep()
+    {
+        var selectedStepIndex = _stepItems.IndexOf(SelectedStep);
+
+        if (selectedStepIndex == _stepItems.Count - 1)
+        {
+            return Task.CompletedTask;
+        }
+
+        SelectedStep = _stepItems[selectedStepIndex + 1];
+        return InvokeAsync(StateHasChanged);
+    }
+
+    public Task PreviousStep()
+    {
+        var selectedStepIndex = _stepItems.IndexOf(SelectedStep);
+
+        if (selectedStepIndex <= 0)
+        {
+            return Task.CompletedTask;
+        }
+
+        SelectedStep = _stepItems[selectedStepIndex - 1];
+        return InvokeAsync(StateHasChanged);
+    }
+
+    internal int IndexOfStep(string name)
+    {
+        return _stepItems.IndexOf(name) + 1;
+    }
+
+    private string GetStepsClasses()
+    {
+        var classes = new List<string> { "steps", "nav", "nav-pills", "flex-wrap", "gap-2" };
+
+        if (RenderMode != StepRenderMode.Default)
+            classes.Add($"steps-{RenderMode.Value}");
+
+        return string.Join(" ", classes);
+    }
+
+    private string GetContentClasses()
+    {
+        return "tab-content mt-3";
     }
 }

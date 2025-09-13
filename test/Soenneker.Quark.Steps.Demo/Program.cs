@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using Serilog;
 using Serilog.Debugging;
+using Soenneker.Quark.Steps.Registrars;
 using Soenneker.Serilog.Sinks.Browser.Blazor.Registrars;
 
 namespace Soenneker.Quark.Steps.Demo;
@@ -30,6 +31,7 @@ public sealed class Program
                 BaseAddress = new Uri(builder.HostEnvironment.BaseAddress)
             });
 
+            builder.Services.AddStepsAsScoped();
 
             WebAssemblyHost host = builder.Build();
 
