@@ -42,7 +42,7 @@
 
     <ItemGroup>
         <PackageReference Include="Soenneker.Quark.Enums.Colors" Version="3.0.1" />
-        <PackageReference Include="Soenneker.Quark.Divs" Version="3.0.8" />
+        <PackageReference Include="Soenneker.Quark.Divs" Version="3.0.9" />
         <PackageReference Include="Soenneker.Quark.ListItems" Version="3.0.5" />
         <PackageReference Include="Soenneker.Quark.Spans" Version="3.0.8" />
         <PackageReference Include="Soenneker.Quark.UnorderedLists" Version="3.0.2" />
