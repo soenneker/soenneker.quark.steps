@@ -5,7 +5,8 @@
 @using Soenneker.Quark.Spans
 @using Soenneker.Quark.ListItems
 @using Soenneker.Quark.Anchors
-@using Soenneker.Quark.Dtos.Colors
+@using Soenneker.Quark.Components.Builders
+@using Soenneker.Quark.Components.Builders.Colors
 
 @inherits Soenneker.Quark.Components.Element
 @implements IDisposable
@@ -62,9 +63,6 @@
     private StepState? _parentStepsState;
 
     [Parameter]
-    public string? Name { get; set; }
-
-    [Parameter]
     public int? Index { get; set; }
 
     [Parameter]
@@ -74,7 +72,7 @@
     public bool Disabled { get; set; }
 
     [Parameter]
-    public Color Color { get; set; } = Color.Primary;
+    public CssValue<ColorBuilder> Color { get; set; } = Components.Builders.Colors.Color.Primary;
 
     [Parameter]
     public StepStatus Status { get; set; } = StepStatus.Pending;
@@ -155,8 +153,10 @@
     {
         var classes = new List<string> { "step-marker" };
 
-        if (Color.IsTheme)
-            classes.Add($"step-marker-{Color.Theme!.ToString()?.ToLower()}");
+        var isTheme = Color.TryGetBootstrapThemeToken(out string token);
+
+        if (isTheme)
+            classes.Add($"step-marker-{token}");
 
         if (Active)
             classes.Add("step-marker-active");
