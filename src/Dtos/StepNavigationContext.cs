@@ -1,4 +1,4 @@
-namespace Soenneker.Quark.Steps.Dtos;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Context for step navigation events.

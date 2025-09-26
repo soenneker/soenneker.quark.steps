@@ -1,4 +1,4 @@
-namespace Soenneker.Quark.Steps.Dtos;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Holds the information about the current state of the StepContent component.

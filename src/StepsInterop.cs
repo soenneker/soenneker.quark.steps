@@ -1,10 +1,9 @@
 using System.Threading;
 using System.Threading.Tasks;
-using Soenneker.Quark.Steps.Abstract;
 using Soenneker.Blazor.Utils.ResourceLoader.Abstract;
 using Soenneker.Utils.AsyncSingleton;
 
-namespace Soenneker.Quark.Steps;
+namespace Soenneker.Quark;
 
 ///<inheritdoc cref="IStepsInterop"/>
 public sealed class StepsInterop : IStepsInterop

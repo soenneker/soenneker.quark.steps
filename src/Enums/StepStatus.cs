@@ -1,6 +1,6 @@
 using Intellenum;
 
-namespace Soenneker.Quark.Steps.Enums;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// An enumeration for Quark, representing step status values.

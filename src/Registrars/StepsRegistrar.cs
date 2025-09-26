@@ -1,9 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Soenneker.Quark.Steps.Abstract;
 using Soenneker.Blazor.Utils.ResourceLoader.Registrars;
 
-namespace Soenneker.Quark.Steps.Registrars;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// A Blazor UI element for step indicators and navigation

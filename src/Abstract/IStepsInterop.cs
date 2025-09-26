@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Soenneker.Quark.Steps.Abstract;
+namespace Soenneker.Quark;
 
 /// <summary>
 /// Interface for Steps component JavaScript interop operations.
