@@ -1,5 +1,3 @@
-@using Soenneker.Quark.Divs
-
 @inherits Soenneker.Quark.Element
 @implements IDisposable
 
@@ -44,7 +42,7 @@
     }
 
     [CascadingParameter]
-    public Steps? ParentSteps { get; set; }
+    public StepContainer? ParentSteps { get; set; }
 
     [CascadingParameter]
     public StepContent? ParentStepContent { get; set; }

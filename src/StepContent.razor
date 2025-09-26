@@ -1,5 +1,3 @@
-@using Soenneker.Quark.Divs
-
 @inherits Soenneker.Quark.Element
 
 <CascadingValue Value="_state">
@@ -9,6 +7,8 @@
 </CascadingValue>
 
 @code {
+	public override string? Name { get; set; } = "StepContent";
+
     private StepContentState _state = new();
     private readonly List<string> _stepPanels = [];
 

@@ -1,6 +1,3 @@
-@using Soenneker.Quark.Divs
-@using Soenneker.Quark.UnorderedLists
-
 @inherits Soenneker.Quark.Element
 @inject IStepsInterop StepsInterop
 
@@ -27,8 +24,10 @@
 </CascadingValue>
 
 @code {
+	public override string? Name { get; set; } = "Steps";
+
     private StepState _state = new();
-    private readonly List<string> _stepItems = new();
+    private readonly List<string> _stepItems = [];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

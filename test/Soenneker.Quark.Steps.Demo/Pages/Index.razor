@@ -1,5 +1,4 @@
 @page "/"
-@using Soenneker.Quark.Components.Builders.Colors
 
 <div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
     <div style="text-align: center; margin-bottom: 3rem;">
@@ -11,7 +10,7 @@
         <h2 style="font-size: 1.875rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; text-align: center;">✨ Modern Step Navigation</h2>
         <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Click on any step to navigate directly, or use the navigation buttons below.</p>
 
-        <Steps @bind-SelectedStep="_currentStep">
+        <StepContainer @bind-SelectedStep="_currentStep">
             <Step Name="step1">
                 <Caption>Personal Information</Caption>
             </Step>
@@ -24,7 +23,7 @@
             <Step Name="step4">
                 <Caption>Complete</Caption>
             </Step>
-        </Steps>
+        </StepContainer>
 
         <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
             <button @onclick="GoToPrevious" disabled="@(_currentStep == "step1")" 
@@ -52,7 +51,7 @@
         <h2 style="font-size: 1.875rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; text-align: center;">🎨 Custom Markers & Colors</h2>
         <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Showcase your brand with custom icons and color schemes.</p>
         
-        <Steps SelectedStep="_customStep">
+        <StepContainer SelectedStep="_customStep">
             <Step Name="step1" Color="Color.Success">
                 <Marker>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
@@ -77,14 +76,14 @@
                 </Marker>
                 <Caption>Complete</Caption>
             </Step>
-        </Steps>
+        </StepContainer>
     </div>
 
     <div style="background: white; padding: 3rem; border-radius: 24px; border: 1px solid #f1f5f9; margin-bottom: 4rem;">
         <h2 style="font-size: 1.875rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; text-align: center;">📋 Interactive Content Panels</h2>
         <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Experience dynamic content switching with smooth transitions.</p>
         
-        <Steps SelectedStep="_contentStep" RenderMode="StepRenderMode.Default">
+        <StepContainer SelectedStep="_contentStep" RenderMode="StepRenderMode.Default">
             <Items>
                 <Step Name="info">
                     <Caption>Information</Caption>
@@ -125,7 +124,7 @@
                     </div>
                 </StepPanel>
             </Content>
-        </Steps>
+        </StepContainer>
 
         <div style="display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap;">
             <button @onclick="SetInfoStep" 
@@ -153,7 +152,7 @@
         <h2 style="font-size: 1.875rem; font-weight: 600; color: #1e293b; margin-bottom: 1.5rem; text-align: center;">✅ Progress Tracking</h2>
         <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">Visual progress indicators help users understand their journey and completed tasks.</p>
         
-        <Steps SelectedStep="_completedStep">
+        <StepContainer SelectedStep="_completedStep">
             <Step Name="step1" Completed="true">
                 <Caption>Account Setup</Caption>
             </Step>
@@ -166,7 +165,7 @@
             <Step Name="step4">
                 <Caption>Final Review</Caption>
             </Step>
-        </Steps>
+        </StepContainer>
         
         <div style="text-align: center; margin-top: 2rem;">
             <div style="background: white; padding: 1.5rem; border-radius: 12px; display: inline-block; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
