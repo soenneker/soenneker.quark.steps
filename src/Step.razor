@@ -95,7 +95,7 @@
     }
 
     [CascadingParameter]
-    public StepContainer? ParentSteps { get; set; }
+    public StepsContainer? ParentSteps { get; set; }
 
     private bool Active => _parentStepsState?.SelectedStep == Name;
 
