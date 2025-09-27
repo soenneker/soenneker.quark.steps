@@ -3,7 +3,7 @@ namespace Soenneker.Quark;
 /// <summary>
 /// Holds the information about the current state of the Steps component.
 /// </summary>
-public record StepState
+public sealed record StepState
 {
     /// <summary>
     /// Gets the name of the selected step item.

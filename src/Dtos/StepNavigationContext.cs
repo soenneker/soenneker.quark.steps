@@ -3,7 +3,7 @@ namespace Soenneker.Quark;
 /// <summary>
 /// Context for step navigation events.
 /// </summary>
-public record StepNavigationContext
+public sealed record StepNavigationContext
 {
     /// <summary>
     /// Gets the current step name.
