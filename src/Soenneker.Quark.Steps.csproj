@@ -45,7 +45,7 @@
     <ItemGroup>
         <PackageReference Include="Soenneker.Quark.Divs" Version="3.0.22" />
         <PackageReference Include="Soenneker.Quark.ListItems.Unordered" Version="3.0.1" />
-        <PackageReference Include="Soenneker.Quark.Spans" Version="3.0.26" />
+        <PackageReference Include="Soenneker.Quark.Spans" Version="3.0.27" />
         <PackageReference Include="Soenneker.Quark.UnorderedLists" Version="3.0.24" />
         <PackageReference Include="Soenneker.Quark.Anchors" Version="3.0.22" />
         <PackageReference Include="Soenneker.Blazor.Utils.ResourceLoader" Version="3.0.1503" />
